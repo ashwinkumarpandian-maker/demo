@@ -370,6 +370,7 @@
               <a class="btn btn-primary" id="start_now" href="#contact" style="display: none;" data-start-now>Start Now</a>
               <a class="btn btn-secondary" href="#features">Learn More</a>
             </div>
+<p id="preview-as" style="margin-top:18px;font-size:0.9rem;color:var(--muted)">Viewing as: <a href="?user=visitor" data-user="visitor">Visitor</a> &middot; <a href="?user=beta" data-user="beta">Beta tester</a></p>
           </div>
 
           <div class="hero-visual" aria-label="Preview card">
@@ -455,6 +456,17 @@ function applyFlag() {
 
 // Empty namespace so the flag name is exactly "start_now" (not "default.start_now").
 RoxAPI.register('', flags);
+
+// Who is viewing? Add ?user=beta to the URL to preview as a beta tester.
+// user_type must be set BEFORE setup() so CloudBees can match the beta-testers target group.
+const userType = new URLSearchParams(location.search).get('user') === 'beta' ? 'beta' : 'visitor';
+if (typeof RoxAPI.setCustomStringProperty === 'function') {
+  RoxAPI.setCustomStringProperty('user_type', userType);
+}
+document.querySelectorAll('#preview-as a').forEach(function (a) {
+  if (a.dataset.user === userType) { a.style.fontWeight = '800'; a.style.color = 'var(--primary)'; }
+});
+console.log('user_type set to ' + userType);
 
 try {
   // configurationFetchedHandler runs after flag values are synced from CloudBees.
