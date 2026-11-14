@@ -367,8 +367,7 @@
               Start with a simple, polished presence that makes a memorable first impression.
             </p>
             <div class="actions">
-              <a class="btn btn-primary" href="#contact" data-start-now>Start Now</a>
-              <button class="btn btn-secondary" id="start_now" type="button" style="display: none;" data-start-now>Start Now</button>
+              <a class="btn btn-primary" id="start_now" href="#contact" style="display: none;" data-start-now>Start Now</a>
               <a class="btn btn-secondary" href="#features">Learn More</a>
             </div>
           </div>
@@ -433,47 +432,43 @@
       </section>
     </main>
 
-    <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
-    <script>
-      window.addEventListener('load', function () {
-        const startNowButton = document.getElementById('start_now');
+    <script src="https://cdn.jsdelivr.net/npm/rox-browser@6.0.13/dist/rox-browser.min.js"></script>
+<script>
+(function () {
+  var startNowButton = document.getElementById('start_now');
 
-        // Keep both Start Now controls using the same click action.
-        document.querySelectorAll('[data-start-now]').forEach((control) => {
-          control.addEventListener('click', function (event) {
-            event.preventDefault();
-            document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-          });
-        });
+  // Start Now is controlled by the CloudBees "start_now" feature flag (hidden by default).
+  startNowButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+  });
 
-        setTimeout(function () {
-          if (!window.Rox) {
-            console.error('CloudBees Feature Management SDK failed to load');
-            console.error('Possible causes: Network issue, CDN blocked, or CORS policy');
-            return;
-          }
+  // The rox-browser script tag may expose the SDK as Rox or Rox.default.
+  var RoxAPI = window.Rox && (window.Rox.default || window.Rox);
+  if (!RoxAPI || typeof RoxAPI.setup !== 'function') {
+    console.error('CloudBees Feature Management SDK failed to load');
+    console.error('Possible causes: Network issue, CDN blocked, or CORS policy');
+    return;
+  }
 
-          const flags = {
-            start_now: new Rox.Flag(false)
-          };
+  var flags = { start_now: new RoxAPI.Flag(false) };
 
-          Rox.register('default', flags);
-          Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d')
-            .then(function () {
-              console.log('✓ CloudBees Feature Management initialized successfully!');
-              if (flags.start_now.isEnabled()) {
-                startNowButton.style.display = 'block';
-                console.log('✓ start_now feature flag is ON: button is visible.');
-              } else {
-                startNowButton.style.display = 'none';
-                console.log('✓ start_now feature flag is OFF: button is hidden.');
-              }
-            })
-            .catch(function (error) {
-              console.error('Failed to initialize CloudBees Feature Management:', error);
-            });
-        }, 500);
-      });
-    </script>
-  </body>
+  function applyFlag() {
+    var on = flags.start_now.isEnabled();
+    startNowButton.style.display = on ? 'inline-flex' : 'none';
+    console.log('start_now feature flag is ' + (on ? 'ON: button visible' : 'OFF: button hidden'));
+  }
+
+  RoxAPI.register('default', flags);
+  RoxAPI.setup('735fafe8-a74b-4090-ac75-fc8a6826946d', { configurationFetchedHandler: applyFlag })
+    .then(function () {
+      console.log('CloudBees Feature Management initialized successfully');
+      applyFlag();
+    })
+    .catch(function (error) {
+      console.error('Failed to initialize CloudBees Feature Management:', error);
+    });
+})();
+</script>
+</body>
 </html>
