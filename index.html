@@ -338,7 +338,18 @@
         .nav-links { display: none; }
         .cta-box { text-align: center; justify-content: center; }
       }
-    </style>
+    
+.lessons{display:grid;gap:12px;margin-top:16px}
+.lesson{background:#fff;border:1px solid rgba(31,41,55,0.12);border-radius:14px;padding:14px 18px}
+.lesson summary{cursor:pointer;font-weight:700;list-style:none}
+.lesson-num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;align-items:center;justify-content:center;font-size:0.8rem;margin-right:8px}
+.lesson-body{margin-top:12px;line-height:1.6}
+.lesson pre{background:#1f2937;color:#e5e7eb;padding:12px;border-radius:10px;overflow:auto;font-size:0.85rem}
+.video-slot{border:2px dashed rgba(31,41,55,0.25);border-radius:12px;padding:28px;text-align:center;color:var(--muted);margin-bottom:12px}
+.lesson.done{border-color:#22c55e}
+.lesson.done .lesson-num{background:#22c55e}
+.learned{display:inline-flex;gap:8px;align-items:center;font-weight:600}
+</style>
   </head>
   <body>
     <header>
@@ -420,7 +431,22 @@
         </div>
       </section>
 
-      <section id="contact" class="cta-panel">
+      <section id="learn" style="padding:64px 24px;max-width:960px;margin:0 auto">
+<h2>Learn: feature flags, mistakes and fixes</h2>
+<p class="muted" style="color:var(--muted)">A short hands-on course built from the real problems we hit on this page. Open each lesson, read the symptom, the cause and the fix, then tick it off.</p>
+<p id="learn-progress" style="font-weight:700">Progress: 0 / 7 lessons</p>
+<div class="lessons">
+<details class="lesson" data-lesson="1"><summary><span class="lesson-num">1</span> Flag name must match exactly</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 1 here</div><p><strong>Symptom:</strong> The button never reacted to the flag.</p><p><strong>Why it happened:</strong> register("default", flags) renamed the flag to default.start_now, so CloudBees (which has start_now) never matched.</p><p><strong>Fix:</strong></p><pre><code>RoxAPI.register("", flags); // flag name stays start_now</code></pre><label class="learned"><input type="checkbox" data-learned="1"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="2"><summary><span class="lesson-num">2</span> Use the browser-ready SDK build</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 2 here</div><p><strong>Symptom:</strong> Console error: cannot read get of undefined (axios).</p><p><strong>Why it happened:</strong> The plain script-tag build of rox-browser does not bundle axios.</p><p><strong>Fix:</strong></p><pre><code>import RoxModule from "https://cdn.jsdelivr.net/npm/rox-browser@6.0.13/+esm";</code></pre><label class="learned"><input type="checkbox" data-learned="2"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="3"><summary><span class="lesson-num">3</span> Do not assume setup() returns a Promise</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 3 here</div><p><strong>Symptom:</strong> Console error: cannot read then of undefined.</p><p><strong>Why it happened:</strong> In this build setup() returns nothing, so chaining .then() crashes.</p><p><strong>Fix:</strong></p><pre><code>configurationFetchedHandler: function () { applyFlag(); } // runs when config arrives</code></pre><label class="learned"><input type="checkbox" data-learned="3"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="4"><summary><span class="lesson-num">4</span> Configuration switch Off means code default</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 4 here</div><p><strong>Symptom:</strong> Flag set to True in the dashboard but the button stayed hidden.</p><p><strong>Why it happened:</strong> With the switch Off, CloudBees serves the value written in code (false).</p><p><strong>Fix:</strong></p><pre><code>Switch On, then Set to True and Save configuration.</code></pre><label class="learned"><input type="checkbox" data-learned="4"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="5"><summary><span class="lesson-num">5</span> SDK key = environment</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 5 here</div><p><strong>Symptom:</strong> Changes in one environment did not show on the site.</p><p><strong>Why it happened:</strong> Each environment (dev, stage) has its own SDK key. The page only sees the environment its key belongs to.</p><p><strong>Fix:</strong></p><pre><code>Edit the flag in the same environment whose SDK key is in the page.</code></pre><label class="learned"><input type="checkbox" data-learned="5"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="6"><summary><span class="lesson-num">6</span> Caching and Pages deploy lag</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 6 here</div><p><strong>Symptom:</strong> Fixed code still showed old behaviour.</p><p><strong>Why it happened:</strong> GitHub Pages takes 30 to 60 seconds to deploy and browsers cache the old file.</p><p><strong>Fix:</strong></p><pre><code>Wait a minute, then hard refresh (Ctrl+Shift+R) or add ?v=2 to the URL.</code></pre><label class="learned"><input type="checkbox" data-learned="6"> Mark as learned</label></div></details>
+<details class="lesson" data-lesson="7"><summary><span class="lesson-num">7</span> Target groups and custom properties</summary><div class="lesson-body"><div class="video-slot">Video lesson placeholder: paste a YouTube or MP4 link for lesson 7 here</div><p><strong>Symptom:</strong> Wanted the button only for selected users.</p><p><strong>Why it happened:</strong> A target group is a rule on a property. The property value must be set in code before setup().</p><p><strong>Fix:</strong></p><pre><code>RoxAPI.setCustomStringProperty("user_type", "beta"); // then rule: user_type equals beta</code></pre><label class="learned"><input type="checkbox" data-learned="7"> Mark as learned</label></div></details>
+</div>
+</section>
+
+<section id="contact" class="cta-panel">
         <div class="container">
           <div class="cta-box">
             <div>
@@ -484,6 +510,22 @@ try {
 } catch (error) {
   console.error('Failed to initialize CloudBees Feature Management:', error);
 }
+</script>
+
+<script>
+(function(){
+ var key="learned-lessons", saved=[];
+ try{saved=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){}
+ var boxes=document.querySelectorAll("[data-learned]");
+ function update(){
+  var done=[];
+  boxes.forEach(function(b){var d=b.closest(".lesson");d.classList.toggle("done",b.checked);if(b.checked)done.push(b.dataset.learned);});
+  document.getElementById("learn-progress").textContent="Progress: "+done.length+" / "+boxes.length+" lessons";
+  try{localStorage.setItem(key,JSON.stringify(done));}catch(e){}
+ }
+ boxes.forEach(function(b){b.checked=saved.indexOf(b.dataset.learned)>-1;b.addEventListener("change",update);});
+ update();
+})();
 </script>
 </body>
 </html>
