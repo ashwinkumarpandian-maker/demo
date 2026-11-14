@@ -460,14 +460,24 @@
   }
 
   RoxAPI.register('default', flags);
-  RoxAPI.setup('735fafe8-a74b-4090-ac75-fc8a6826946d', { configurationFetchedHandler: applyFlag })
-    .then(function () {
-      console.log('CloudBees Feature Management initialized successfully');
-      applyFlag();
-    })
-    .catch(function (error) {
-      console.error('Failed to initialize CloudBees Feature Management:', error);
+
+  // setup() may not return a Promise in the script-tag build, so don't chain on it.
+  // configurationFetchedHandler runs after flag values are synced from CloudBees.
+  try {
+    var setupResult = RoxAPI.setup('735fafe8-a74b-4090-ac75-fc8a6826946d', {
+      configurationFetchedHandler: function (fetchResult) {
+        console.log('CloudBees configuration fetched', fetchResult && fetchResult.fetcherStatus);
+        applyFlag();
+      }
     });
+    if (setupResult && typeof setupResult.then === 'function') {
+      setupResult.then(applyFlag).catch(function (error) {
+        console.error('Failed to initialize CloudBees Feature Management:', error);
+      });
+    }
+  } catch (error) {
+    console.error('Failed to initialize CloudBees Feature Management:', error);
+  }
 })();
 </script>
 </body>
