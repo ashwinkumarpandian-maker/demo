@@ -18,7 +18,6 @@
       }
 
       * { box-sizing: border-box; }
-
       html { scroll-behavior: smooth; }
 
       body {
@@ -28,10 +27,7 @@
         color: var(--text);
       }
 
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+      a { color: inherit; text-decoration: none; }
 
       .container {
         width: min(1120px, calc(100% - 32px));
@@ -90,9 +86,7 @@
         box-shadow: 0 10px 25px rgba(91, 92, 230, 0.28);
       }
 
-      .hero {
-        padding: 80px 0 40px;
-      }
+      .hero { padding: 80px 0 40px; }
 
       .hero-inner {
         display: grid;
@@ -146,6 +140,7 @@
         border-radius: 14px;
         font-weight: 700;
         transition: 0.2s ease;
+        cursor: pointer;
       }
 
       .btn-primary {
@@ -160,9 +155,8 @@
         color: var(--text);
       }
 
-      .btn:hover {
-        transform: translateY(-1px);
-      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
 
       .hero-visual {
         position: relative;
@@ -253,9 +247,7 @@
         margin-bottom: 5px;
       }
 
-      .stats {
-        padding: 30px 0 20px;
-      }
+      .stats { padding: 30px 0 20px; }
 
       .stats-grid {
         display: grid;
@@ -277,19 +269,9 @@
         letter-spacing: -0.05em;
       }
 
-      .stat span {
-        color: var(--muted);
-        font-weight: 600;
-      }
-
-      .features {
-        padding: 60px 0 40px;
-      }
-
-      .section-head {
-        text-align: center;
-        margin-bottom: 32px;
-      }
+      .stat span { color: var(--muted); font-weight: 600; }
+      .features { padding: 60px 0 40px; }
+      .section-head { text-align: center; margin-bottom: 32px; }
 
       .section-head h2 {
         margin: 0;
@@ -297,10 +279,7 @@
         letter-spacing: -0.06em;
       }
 
-      .section-head p {
-        margin-top: 12px;
-        color: var(--muted);
-      }
+      .section-head p { margin-top: 12px; color: var(--muted); }
 
       .feature-grid {
         display: grid;
@@ -327,20 +306,9 @@
         font-size: 1.5rem;
       }
 
-      .feature h3 {
-        margin: 0 0 10px;
-        font-size: 1.3rem;
-      }
-
-      .feature p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.8;
-      }
-
-      .cta-panel {
-        padding: 28px 0 90px;
-      }
+      .feature h3 { margin: 0 0 10px; font-size: 1.3rem; }
+      .feature p { margin: 0; color: var(--muted); line-height: 1.8; }
+      .cta-panel { padding: 28px 0 90px; }
 
       .cta-box {
         display: flex;
@@ -359,31 +327,18 @@
         letter-spacing: -0.05em;
       }
 
-      .cta-box p {
-        margin: 0;
-        color: rgba(255, 255, 255, 0.75);
-      }
+      .cta-box p { margin: 0; color: rgba(255, 255, 255, 0.75); }
 
       @media (max-width: 860px) {
-        .hero-inner,
-        .feature-grid,
-        .stats-grid,
-        .cta-box {
+        .hero-inner, .feature-grid, .stats-grid, .cta-box {
           grid-template-columns: 1fr;
           display: grid;
         }
-
-        .nav-links {
-          display: none;
-        }
-
-        .cta-box {
-          text-align: center;
-          justify-content: center;
-        }
+        .nav-links { display: none; }
+        .cta-box { text-align: center; justify-content: center; }
       }
     </style>
-     <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
+    <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
   </head>
   <body>
     <header>
@@ -392,7 +347,6 @@
           <span class="brand-mark">W</span>
           <span>Welcome</span>
         </a>
-
         <nav class="nav-links" aria-label="Main navigation">
           <a href="#about">About</a>
           <a href="#features">Features</a>
@@ -412,61 +366,21 @@
               We build thoughtful digital experiences that are clean, modern, and easy to use.
               Start with a simple, polished presence that makes a memorable first impression.
             </p>
-
             <div class="actions">
-              <a class="btn btn-primary" href="#contact">Start Now</a>
-               <!-- Your existing HTML content -->
-    <a class="btn btn-secondary" ><button id="start_now">Start Now</button></a>
+              <a class="btn btn-primary" href="#contact" data-start-now>Start Now</a>
+              <a class="btn btn-secondary" href="#contact" data-start-now>Start Now</a>
               <a class="btn btn-secondary" href="#features">Learn More</a>
             </div>
           </div>
 
-           <script>
-        // Define your feature flags
-        const flags = {
-            start_now: new Rox.Flag(false) // Default to false if SDK fails
-        };
-
-        // Register flags with CloudBees
-        Rox.register('default', flags);
-
-        // Setup with your dev environment SDK key
-        Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d').then(() => {
-            console.log('CloudBees Feature Management initialized!');
-            
-            // Control your button based on the flag
-            const button = document.getElementById('start_now');
-            
-            if (flags.start_now.isEnabled()) {
-                button.disabled = false;
-                button.style.opacity = '1';
-                console.log('✓ start_now flag is ON - button enabled');
-            } else {
-                button.disabled = true;
-                button.style.opacity = '0.5';
-                console.log('✗ start_now flag is OFF - button disabled');
-            }
-        }).catch((error) => {
-            console.error('Failed to initialize feature flags:', error);
-        });
-    </script>
           <div class="hero-visual" aria-label="Preview card">
             <div class="card-stack">
               <div class="floating-card main-card">
-                <div class="mini">
-                  <span>Growth</span>
-                  <span>+24.8%</span>
-                </div>
-
+                <div class="mini"><span>Growth</span><span>+24.8%</span></div>
                 <div class="chart"></div>
               </div>
-
               <div class="badge">Live</div>
-
-              <div class="mini-panel">
-                <strong>1.4k</strong>
-                <span>Happy users</span>
-              </div>
+              <div class="mini-panel"><strong>1.4k</strong><span>Happy users</span></div>
             </div>
           </div>
         </div>
@@ -474,18 +388,9 @@
 
       <section class="stats">
         <div class="container stats-grid">
-          <div class="stat">
-            <strong>12k+</strong>
-            <span>Visitors</span>
-          </div>
-          <div class="stat">
-            <strong>98%</strong>
-            <span>Satisfaction</span>
-          </div>
-          <div class="stat">
-            <strong>24/7</strong>
-            <span>Support</span>
-          </div>
+          <div class="stat"><strong>12k+</strong><span>Visitors</span></div>
+          <div class="stat"><strong>98%</strong><span>Satisfaction</span></div>
+          <div class="stat"><strong>24/7</strong><span>Support</span></div>
         </div>
       </section>
 
@@ -495,20 +400,17 @@
             <h2>Everything you need to stand out</h2>
             <p>Simple, elegant, and built to make a strong first impression.</p>
           </div>
-
           <div class="feature-grid">
             <article class="feature">
               <div class="feature-icon">⚡</div>
               <h3>Fast</h3>
               <p>Responsive design that looks great on desktop, tablet, and mobile devices.</p>
             </article>
-
             <article class="feature">
               <div class="feature-icon">🎨</div>
               <h3>Modern</h3>
               <p>Clean layouts, smooth gradients, and refined UI details that feel premium.</p>
             </article>
-
             <article class="feature">
               <div class="feature-icon">🤝</div>
               <h3>Friendly</h3>
@@ -530,5 +432,34 @@
         </div>
       </section>
     </main>
+
+    <script>
+      const startNowLinks = document.querySelectorAll('[data-start-now]');
+      const flags = { start_now: new Rox.Flag(false) };
+
+      // Give both Start Now links the same click action and feature-flag state.
+      startNowLinks.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          if (link.getAttribute('aria-disabled') === 'true') {
+            event.preventDefault();
+            return;
+          }
+          event.preventDefault();
+          document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      Rox.register('default', flags);
+      Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d').then(() => {
+        const enabled = flags.start_now.isEnabled();
+        startNowLinks.forEach((link) => {
+          link.setAttribute('aria-disabled', String(!enabled));
+          link.tabIndex = enabled ? 0 : -1;
+        });
+        console.log(`start_now flag is ${enabled ? 'ON' : 'OFF'}`);
+      }).catch((error) => {
+        console.error('Failed to initialize feature flags:', error);
+      });
+    </script>
   </body>
 </html>
