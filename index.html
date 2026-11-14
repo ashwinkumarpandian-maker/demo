@@ -446,29 +446,33 @@
           });
         });
 
-        if (!window.Rox) {
-          console.error('CloudBees Feature Management SDK failed to load.');
-          return;
-        }
+        setTimeout(function () {
+          if (!window.Rox) {
+            console.error('CloudBees Feature Management SDK failed to load');
+            console.error('Possible causes: Network issue, CDN blocked, or CORS policy');
+            return;
+          }
 
-        const flags = {
-          start_now: new Rox.Flag(false)
-        };
+          const flags = {
+            start_now: new Rox.Flag(false)
+          };
 
-        Rox.register('default', flags);
-        Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d')
-          .then(function () {
-            if (flags.start_now.isEnabled()) {
-              startNowButton.style.display = 'block';
-              console.log('start_now feature flag is ON: button is visible.');
-            } else {
-              startNowButton.style.display = 'none';
-              console.log('start_now feature flag is OFF: button is hidden.');
-            }
-          })
-          .catch(function (error) {
-            console.error('Failed to initialize CloudBees Feature Management:', error);
-          });
+          Rox.register('default', flags);
+          Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d')
+            .then(function () {
+              console.log('✓ CloudBees Feature Management initialized successfully!');
+              if (flags.start_now.isEnabled()) {
+                startNowButton.style.display = 'block';
+                console.log('✓ start_now feature flag is ON: button is visible.');
+              } else {
+                startNowButton.style.display = 'none';
+                console.log('✓ start_now feature flag is OFF: button is hidden.');
+              }
+            })
+            .catch(function (error) {
+              console.error('Failed to initialize CloudBees Feature Management:', error);
+            });
+        }, 500);
       });
     </script>
   </body>
