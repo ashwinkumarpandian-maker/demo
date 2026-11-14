@@ -432,53 +432,45 @@
       </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/rox-browser@6.0.13/dist/rox-browser.min.js"></script>
-<script>
-(function () {
-  var startNowButton = document.getElementById('start_now');
+    <script type="module">
+// rox-browser's ES-module build via jsDelivr (bundles its axios dependency).
+import RoxModule from 'https://cdn.jsdelivr.net/npm/rox-browser@6.0.13/+esm';
 
-  // Start Now is controlled by the CloudBees "start_now" feature flag (hidden by default).
-  startNowButton.addEventListener('click', function (event) {
-    event.preventDefault();
-    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-  });
+const RoxAPI = (RoxModule && RoxModule.default) || RoxModule;
+const startNowButton = document.getElementById('start_now');
 
-  // The rox-browser script tag may expose the SDK as Rox or Rox.default.
-  var RoxAPI = window.Rox && (window.Rox.default || window.Rox);
-  if (!RoxAPI || typeof RoxAPI.setup !== 'function') {
-    console.error('CloudBees Feature Management SDK failed to load');
-    console.error('Possible causes: Network issue, CDN blocked, or CORS policy');
-    return;
-  }
+// Start Now is controlled by the CloudBees "start_now" feature flag (hidden by default).
+startNowButton.addEventListener('click', function (event) {
+  event.preventDefault();
+  document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+});
 
-  var flags = { start_now: new RoxAPI.Flag(false) };
+const flags = { start_now: new RoxAPI.Flag(false) };
 
-  function applyFlag() {
-    var on = flags.start_now.isEnabled();
-    startNowButton.style.display = on ? 'inline-flex' : 'none';
-    console.log('start_now feature flag is ' + (on ? 'ON: button visible' : 'OFF: button hidden'));
-  }
+function applyFlag() {
+  const on = flags.start_now.isEnabled();
+  startNowButton.style.display = on ? 'inline-flex' : 'none';
+  console.log('start_now feature flag is ' + (on ? 'ON: button visible' : 'OFF: button hidden'));
+}
 
-  RoxAPI.register('default', flags);
+RoxAPI.register('default', flags);
 
-  // setup() may not return a Promise in the script-tag build, so don't chain on it.
+try {
   // configurationFetchedHandler runs after flag values are synced from CloudBees.
-  try {
-    var setupResult = RoxAPI.setup('735fafe8-a74b-4090-ac75-fc8a6826946d', {
-      configurationFetchedHandler: function (fetchResult) {
-        console.log('CloudBees configuration fetched', fetchResult && fetchResult.fetcherStatus);
-        applyFlag();
-      }
-    });
-    if (setupResult && typeof setupResult.then === 'function') {
-      setupResult.then(applyFlag).catch(function (error) {
-        console.error('Failed to initialize CloudBees Feature Management:', error);
-      });
+  const setupResult = RoxAPI.setup('735fafe8-a74b-4090-ac75-fc8a6826946d', {
+    configurationFetchedHandler: function (fetchResult) {
+      console.log('CloudBees configuration fetched', fetchResult && fetchResult.fetcherStatus);
+      applyFlag();
     }
-  } catch (error) {
-    console.error('Failed to initialize CloudBees Feature Management:', error);
+  });
+  if (setupResult && typeof setupResult.then === 'function') {
+    setupResult.then(applyFlag).catch(function (error) {
+      console.error('Failed to initialize CloudBees Feature Management:', error);
+    });
   }
-})();
+} catch (error) {
+  console.error('Failed to initialize CloudBees Feature Management:', error);
+}
 </script>
 </body>
 </html>
