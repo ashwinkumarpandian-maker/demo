@@ -383,6 +383,7 @@
         }
       }
     </style>
+     <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
   </head>
   <body>
     <header>
@@ -414,10 +415,41 @@
 
             <div class="actions">
               <a class="btn btn-primary" href="#contact">Start Now</a>
+               <!-- Your existing HTML content -->
+    <a class="btn btn-secondary" ><button id="start_now">Start Now</button></a>
               <a class="btn btn-secondary" href="#features">Learn More</a>
             </div>
           </div>
 
+           <script>
+        // Define your feature flags
+        const flags = {
+            start_now: new Rox.Flag(false) // Default to false if SDK fails
+        };
+
+        // Register flags with CloudBees
+        Rox.register('default', flags);
+
+        // Setup with your dev environment SDK key
+        Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d').then(() => {
+            console.log('CloudBees Feature Management initialized!');
+            
+            // Control your button based on the flag
+            const button = document.getElementById('start_now');
+            
+            if (flags.start_now.isEnabled()) {
+                button.disabled = false;
+                button.style.opacity = '1';
+                console.log('✓ start_now flag is ON - button enabled');
+            } else {
+                button.disabled = true;
+                button.style.opacity = '0.5';
+                console.log('✗ start_now flag is OFF - button disabled');
+            }
+        }).catch((error) => {
+            console.error('Failed to initialize feature flags:', error);
+        });
+    </script>
           <div class="hero-visual" aria-label="Preview card">
             <div class="card-stack">
               <div class="floating-card main-card">
