@@ -138,6 +138,7 @@
         min-height: 52px;
         padding: 0 22px;
         border-radius: 14px;
+        font: inherit;
         font-weight: 700;
         transition: 0.2s ease;
         cursor: pointer;
@@ -147,6 +148,7 @@
         background: linear-gradient(135deg, var(--primary), var(--accent));
         color: white;
         box-shadow: 0 18px 35px rgba(91, 92, 230, 0.25);
+        border: 0;
       }
 
       .btn-secondary {
@@ -156,7 +158,6 @@
       }
 
       .btn:hover { transform: translateY(-1px); }
-      .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
 
       .hero-visual {
         position: relative;
@@ -338,7 +339,6 @@
         .cta-box { text-align: center; justify-content: center; }
       }
     </style>
-    <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
   </head>
   <body>
     <header>
@@ -368,7 +368,7 @@
             </p>
             <div class="actions">
               <a class="btn btn-primary" href="#contact" data-start-now>Start Now</a>
-              <a class="btn btn-secondary" href="#contact" data-start-now>Start Now</a>
+              <button class="btn btn-secondary" id="start_now" type="button" style="display: none;" data-start-now>Start Now</button>
               <a class="btn btn-secondary" href="#features">Learn More</a>
             </div>
           </div>
@@ -433,32 +433,42 @@
       </section>
     </main>
 
+    <script src="https://x-api.rollout.io/web-sdk/latest/rox.min.js"></script>
     <script>
-      const startNowLinks = document.querySelectorAll('[data-start-now]');
-      const flags = { start_now: new Rox.Flag(false) };
+      window.addEventListener('load', function () {
+        const startNowButton = document.getElementById('start_now');
 
-      // Give both Start Now links the same click action and feature-flag state.
-      startNowLinks.forEach((link) => {
-        link.addEventListener('click', (event) => {
-          if (link.getAttribute('aria-disabled') === 'true') {
+        // Keep both Start Now controls using the same click action.
+        document.querySelectorAll('[data-start-now]').forEach((control) => {
+          control.addEventListener('click', function (event) {
             event.preventDefault();
-            return;
-          }
-          event.preventDefault();
-          document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+          });
         });
-      });
 
-      Rox.register('default', flags);
-      Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d').then(() => {
-        const enabled = flags.start_now.isEnabled();
-        startNowLinks.forEach((link) => {
-          link.setAttribute('aria-disabled', String(!enabled));
-          link.tabIndex = enabled ? 0 : -1;
-        });
-        console.log(`start_now flag is ${enabled ? 'ON' : 'OFF'}`);
-      }).catch((error) => {
-        console.error('Failed to initialize feature flags:', error);
+        if (!window.Rox) {
+          console.error('CloudBees Feature Management SDK failed to load.');
+          return;
+        }
+
+        const flags = {
+          start_now: new Rox.Flag(false)
+        };
+
+        Rox.register('default', flags);
+        Rox.setup('735fafe8-a74b-4090-ac75-fc8a6826946d')
+          .then(function () {
+            if (flags.start_now.isEnabled()) {
+              startNowButton.style.display = 'block';
+              console.log('start_now feature flag is ON: button is visible.');
+            } else {
+              startNowButton.style.display = 'none';
+              console.log('start_now feature flag is OFF: button is hidden.');
+            }
+          })
+          .catch(function (error) {
+            console.error('Failed to initialize CloudBees Feature Management:', error);
+          });
       });
     </script>
   </body>
