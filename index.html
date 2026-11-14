@@ -453,7 +453,8 @@ function applyFlag() {
   console.log('start_now feature flag is ' + (on ? 'ON: button visible' : 'OFF: button hidden'));
 }
 
-RoxAPI.register('default', flags);
+// Empty namespace so the flag name is exactly "start_now" (not "default.start_now").
+RoxAPI.register('', flags);
 
 try {
   // configurationFetchedHandler runs after flag values are synced from CloudBees.
